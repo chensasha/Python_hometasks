@@ -1,0 +1,16 @@
+import random
+
+all_days = 365
+count = 0
+curr_birthday = 0
+arr = []
+for i in range (all_days):
+    arr += [False]
+while True:
+    curr_birthday = random.randrange (all_days)
+    count += 1
+    if (arr[curr_birthday] == True):
+        break
+    else:
+        arr[curr_birthday] = True
+print (count)
