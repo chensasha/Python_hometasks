@@ -1,0 +1,37 @@
+import random
+
+n = 100
+arr = []
+for i in range (n):
+    arr += [0]
+m=10000
+rumor_stopped = 0
+everyone_heard = 0
+people_heard_rumor = 0
+for i in range(m):
+    for j in range(n):
+        arr[j] = 0
+    curr = 0
+    rumor = 0
+    arr[curr] += 1
+    people_heard_rumor += 1
+    while True:
+        count = 0
+        for w in range(n):
+            if (arr[w] > 0):
+                count += 1
+        if (count == n):
+            everyone_heard += 1
+            break
+        else:
+            while rumor == curr:
+                rumor = random.randrange(n)
+            curr = rumor
+            arr[curr] += 1
+            people_heard_rumor += 1
+            if (arr[curr] == 2):
+                rumor_stopped += 1
+                break
+print ("Probability of case when everyone heard the rumour:" + str(float(everyone_heard)/float(m)))
+print (rumor_stopped)
+print (float(people_heard_rumor)/float(m))
