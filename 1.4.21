@@ -1,10 +1,7 @@
 length = 0
-n = int(input())
-arr = []
-for i in range (n):
-    arr += [0]
-for i in range (n):
-    arr[i] = int(input())
+arr = [1, 2, 2, 3, 3, 3, 1, 5, 5, 5, 4]
+n = len(arr)
+print (arr)
 curr = 0
 prev = arr[0]
 index = 0
