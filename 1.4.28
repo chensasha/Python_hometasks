@@ -4,7 +4,7 @@ n = 100
 arr = []
 for i in range (n):
     arr += [0]
-m=10000
+m = 10000
 rumor_stopped = 0
 everyone_heard = 0
 people_heard_rumor = 0
