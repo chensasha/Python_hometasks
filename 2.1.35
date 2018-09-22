@@ -1,0 +1,36 @@
+def is_leap_year(y):
+    isLeapYear = (y % 4 == 0)
+    isLeapYear = isLeapYear and (y % 100 != 0)
+    isLeapYear = isLeapYear or (y % 400 == 0)
+    return isLeapYear
+
+
+def day_of_week(d, m, y):
+    y0 = y - (14 - m) // 12
+    x = y0 + y0 // 4 - y0 // 100 + y0 // 400
+    m0 = m + 12 * ((14 - m) // 12) - 2
+    return (d + x + (31 * m0) // 12) % 7
+
+
+def count_of_days(m, y):
+    if m == 2:
+        if is_leap_year(y):
+            return 29
+        else:
+            return 28
+    if (m % 2 == 1 and m <= 7) or (m % 2 == 0 and m > 7):
+        return 31
+    return 30
+
+month = int(input())
+year = int(input())
+print ("Su " + "Mo " + "Tu " + "We " + "Th " + "Fr " + "Sa")
+days = count_of_days (month, year)
+j = 1
+print (" "*3*day_of_week(j,month, year)),
+while j <= days:
+    if day_of_week(j,month, year) != 6:
+        print (str(j) + " "),
+    else:
+        print (str(j))
+    j += 1
