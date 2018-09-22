@@ -1,0 +1,15 @@
+import math
+
+def binomial (m, k, q):
+    b = (q**k) * ((1-q)**(m-k))
+    c = math.factorial(m) / (math.factorial(k) * math.factorial(m-k))
+    res = math.log(c*b)
+    return math.exp(res)
+
+
+n = int(input())
+p = float(input())
+sum = 0
+for i in range(n+1):
+    sum += binomial(n, i, p)
+print (sum)
