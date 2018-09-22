@@ -1,0 +1,17 @@
+def gcd(a, b):
+    if a == 0:
+        return b
+    if b == 0:
+        return a
+    return gcd(b, a % b)
+
+
+def euler_func(n):
+    k = 1
+    for i in range(2, n):
+        if gcd(i, n) == 1:
+            k += 1
+    return k
+
+n = int(input())
+print (euler_func(n))
