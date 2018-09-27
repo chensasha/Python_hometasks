@@ -1,0 +1,129 @@
+import random
+import math
+
+
+#rand_gen(n) generates a random array length n without big value leaps
+def rand_gen(n):
+    a = []
+    a += [random.randrange(50, 81)]
+    for i in range(1, n):
+        a += [a[i - 1] + random.randrange(-3, 4)]
+    return a
+
+
+#average(a) returns the difference between the last element of array a and array's average value
+def dif_average(a):
+    Average = 0
+    for i in range(0, len(a)):
+        Average += a[i]
+    return(a[len(a) - 1] - float(Average)/len(a))
+
+
+#average_growth(a) returns the value of average growth between a[i] and a[i+1]
+# and total increase and decrease
+def average_growth(a):
+    increase = 0
+    decrease = 0
+    for i in range(0, len(a) - 2):
+        if(a[i + 1] > a[i]):
+            increase += (a[i + 1] - a[i])
+        if(a[i + 1] < a[i]):
+            decrease += (a[i + 1] - a[i])
+    return [increase, decrease, (increase + decrease)/(len(a) - 1)]
+
+
+#extremal_values(a, n) returns an array with indices of extremal values of array a.
+# For each index it also returns 1 if it,s an extremum and -1 if it's an infimum.
+# Here n is an area in which the value is extremal
+# (number of elemnts from the left and from the right of a[i] that must be less/more than a[i])
+def extremal_values(a, n):
+    extr_val = []
+    flag_extr = True #flag checking if a[i] is an extremum flag_inf = True #flag checking if a[i] in an infimum
+    for i in range(0, len(a) - 1):
+        #checking n previous elements
+        for j in range(1, n + 1):
+            if((i - j >= 0) and (a[i - j] >= a[i])):
+                flag_extr = False
+            if ((i - j >= 0) and (a[i - j] <= a[i])):
+                flag_inf = False
+        # checking n next elements
+        for j in range(1, n + 1):
+            if ((i + j < len(a)) and (a[i + j] >= a[i])):
+                flag_extr = False
+            if ((i + j < len(a)) and (a[i + j] <= a[i])):
+                flag_inf = False
+        if(flag_extr == True):
+            extr_val += [[i, 1]]
+        if(flag_inf == True):
+            extr_val += [[i, -1]]
+        flag_extr = True
+        flag_inf = True
+    return extr_val
+
+
+#tan_of_extr creates and returns an array with elements that are tangents of two neighbour extremal values
+def tan_of_extr (a, n):
+    extr = extremal_values (a, n)
+    tan = []
+    for i in range (len(extr)-1):
+        index1 = extr[i][0]
+        index2 = extr[i+1][0]
+        val = math.tan(a[index2] + a[index1]) / (index2 - index1)
+        tan += [val]
+    return tan
+
+
+#average_of_tan returns the average value of tangents,
+def average_of_tan (a, n):
+    tan = tan_of_extr(a, n)
+    sum = 0.0
+    for i in range (len(tan)):
+        sum += tan[i]
+    return sum/len(tan)
+
+
+#which_trend returns string "increasing" if the trend is increasing and "decreasing" in case of decreasing trend
+def which_trend (a, n):
+    all_extr = extremal_values (a, n)
+    extr = []
+    inf = []
+    for i in range (len(all_extr)):
+        if all_extr[i][1] == 1:
+            extr += [all_extr[i][0]]
+        else:
+            inf += [all_extr[i][0]]
+    prev_extr = extr[0]
+    count_e = 0
+    for i in range(1, len(extr)):
+        if extr[i] < prev_extr:
+            count_e += 1
+        prev_extr = extr[i]
+    prev_inf = inf[0]
+    count_i = 0
+    for i in range(1, len(inf)):
+        if inf[i] > prev_inf:
+            count_i += 1
+        prev_inf = inf[i]
+    if count_i == len(inf):
+        return "increasing"
+    if count_e == len(extr):
+        return "decreasing"
+            
+
+
+#test
+print("enter the length ")
+n = int(input())
+a = rand_gen(n)
+for i in range(0, n):
+    print(a[i], end = ' ')
+print('\n')
+print('difference: ' + str(dif_average(a)))
+p = average_growth(a)
+print("total increase: " + str(p[0]) + '\ntotal decrease: ' + str(p[1]) + '\naverage growth: ' + str(p[2]))
+print('\nenter the accuracy distance ')
+acc = int(input())
+temp = extremal_values(a, acc)
+print("extremal points:")
+for i in range(0, len(temp)):
+    print('(' + str(temp[i][0] + 1) + ': ' + str(a[temp[i][0]]) + ' ' + str(temp[i][1]) + ')', end = ' ')
