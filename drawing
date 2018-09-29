@@ -1,0 +1,19 @@
+import stddraw
+import stdrandom
+
+
+n = 200000
+probabilities = [0.456, 0.123, 0.0567]
+cx = [[0.8240, 0.2814, -0.10026], [-0.036111, 0.444444, 0.7251636], [0.307692, -0.000000, -0.0674990]]
+cy = [[-0.2123, 0.8641, 0.09511], [0.210185, 0.037037, 0.7279627], [-0.653846, 0.088235, 0.9231744]]
+x = 0.0
+y = 0.0
+stddraw. setPenRadius(0.0)
+for i in range(n):
+    r = int(stdrandom. discrete(probabilities))
+    x0 = cx[r][0]*x + cx[r][1]*y + cx[r][2]
+    y0 = cy[r][0]*x + cy[r][1]*y + cy[r][2]
+    x = x0
+    y = y0
+    stddraw. point(x, y)
+stddraw.show()
