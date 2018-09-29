@@ -1,0 +1,46 @@
+import stdarray
+import random
+import stddraw
+
+
+def draw_field (n):
+    r = 0.5
+    for i in range(1, n+1):
+        for j in range(1, n+1):
+            x = float(i) - 0.5
+            y = float(j) - 0.5
+            stddraw.square(x, y, r)
+
+
+n = 50
+a = stdarray.create2D(n, n, False)
+x = n//2
+y = n//2
+stddraw.setXscale(0, n)
+stddraw.setYscale(0, n)
+#draw_field(n)
+stddraw.setPenRadius(0.2)
+stddraw.setPenColor(stddraw.GREEN)
+while (x > 0) and (x < n-1) and (y > 0) and (y < n-1):
+        stddraw.show(100)
+        a[x][y] = True
+        x0 = x
+        y0 = y
+        if a[x-1][y] and a[x+1][y] and a[x][y-1] and a[x][y+1]:
+            x = random.randrange(1, n)
+            y = random.randrange(1, n)
+            stddraw.setPenColor(stddraw.RED)
+            stddraw.line(n - 1, n - 1, x0, y0)
+            stddraw.line(x0, y0, x, y)
+            stddraw.setPenColor(stddraw.GREEN)
+            stddraw.clear(stddraw.WHITE)
+        r = random.randrange(1, 5)
+        if (r == 1) and (not a[x+1][y]):
+            x += 1
+        elif (r == 2) and (not a[x-1][y]):
+            x -= 1
+        elif (r == 3) and (not a[x][y+1]):
+            y += 1
+        elif (r == 4) and (not a[x][y-1]):
+            y -= 1
+        stddraw.line(x0, y0, x, y)
