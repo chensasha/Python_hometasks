@@ -12,13 +12,13 @@ def draw_field (n):
             stddraw.square(x, y, r)
 
 
-n = 50
+n = 21
 a = stdarray.create2D(n, n, False)
 x = n//2
 y = n//2
-stddraw.setXscale(0, n)
-stddraw.setYscale(0, n)
-#draw_field(n)
+stddraw.setXscale(0, n-1)
+stddraw.setYscale(0, n-1)
+draw_field(n)
 stddraw.setPenRadius(0.2)
 stddraw.setPenColor(stddraw.GREEN)
 while (x > 0) and (x < n-1) and (y > 0) and (y < n-1):
@@ -30,10 +30,11 @@ while (x > 0) and (x < n-1) and (y > 0) and (y < n-1):
             x = random.randrange(1, n)
             y = random.randrange(1, n)
             stddraw.setPenColor(stddraw.RED)
-            stddraw.line(n - 1, n - 1, x0, y0)
-            stddraw.line(x0, y0, x, y)
+            stddraw.setPenRadius(0.01)
+            stddraw.point(x, y)
+            stddraw.setPenRadius(0.2)
             stddraw.setPenColor(stddraw.GREEN)
-            stddraw.clear(stddraw.WHITE)
+            continue
         r = random.randrange(1, 5)
         if (r == 1) and (not a[x+1][y]):
             x += 1
@@ -44,3 +45,4 @@ while (x > 0) and (x < n-1) and (y > 0) and (y < n-1):
         elif (r == 4) and (not a[x][y-1]):
             y -= 1
         stddraw.line(x0, y0, x, y)
+
