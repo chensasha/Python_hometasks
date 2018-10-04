@@ -1,0 +1,62 @@
+#!/bin/bash
+
+suff=$1
+for i in `seq 2 1 $#`
+do name=$i
+name1=${name##*.}
+name2=${name%.*}
+echo $name2$suff"."$name1
+done
+
+
+
+#!/bin/bash
+
+suff=$1
+if [ -z $3 ]
+then 
+for file in ./*
+do 
+name=$file
+if [ $name == $2 ]
+then
+name1=${name##*.}
+name2=${name%.*}
+echo $name2$suff"."$name1
+fi
+done
+else
+for file in $3
+do
+name=$file
+if [ $name == $2 ]
+then
+name1=${name##*.}
+name2=${name%.*}
+echo $name2$suff"."$name1
+fi
+done
+fi
+
+
+
+#!/bin/bash
+
+size=$1
+if [ $# -ne 2 ]
+then for file in ./*
+do
+filesize=$(stat -c%s "$file")
+if [ $filesize -gt $size ]
+then echo $file
+fi
+done
+else
+for file in $2/*
+do
+filesize=$(stat -c%s "$file")
+if [ $filesize -gt $size ]
+then echo $file
+fi
+done
+fi
