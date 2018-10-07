@@ -1,0 +1,25 @@
+M_AND_C = "One missionary and one cannibal"
+TWO_M = "Two missionaries"
+TWO_C = "Two cannibals"
+
+
+def solving (count_m, count_c, boat):
+    if count_c == 0 and count_m == 0 and boat == 0:
+        print("end")
+    else:
+        if boat == 1:
+            if count_m == count_c:
+                print (M_AND_C + " (" + str(count_m-1) + " of missionaries and " + str(count_c-1) + " of cannibals are left)")
+                solving (count_m - 1, count_c - 1, 0)
+            if count_m > count_c:
+                print (TWO_M + " (" + str(count_m-2) + " of missionaries and " + str(count_c) + " of cannibals are left)")
+                solving(count_m - 2, count_c, 0)
+            if count_c > count_m:
+                print (TWO_C + " (" + str(count_m) + " of missionaries and " + str(count_c-2) + " of cannibals are left)")
+                solving(count_m, count_c - 2, 0)
+        else:
+            print ("One cannibal back")
+            solving (count_m, count_c + 1, 1)
+
+
+solving (3, 3, 1)
