@@ -1,40 +1,46 @@
 #!/bin/bash
 
-suff=$1
-for i in `seq 2 1 $#`
-do name=$i
+if [ $1 == "-d" ]
+then suff=$2
+shift
+shift
+for arg in "$@"
+do name=$arg
 name1=${name##*.}
 name2=${name%.*}
 echo $name2$suff"."$name1
 done
-
+else
+suff=$1
+shift
+for arg in "$@"
+do name=$arg
+name1=${name##*.}
+name2=${name%.*}
+mv $name $name2$suff"."$name1
+done
+fi
 
 
 #!/bin/bash
 
 suff=$1
 if [ -z $3 ]
-then 
-for file in ./*
-do 
-name=$file
-if [ $name == $2 ]
 then
-name1=${name##*.}
-name2=${name%.*}
-echo $name2$suff"."$name1
-fi
-done
-else
-for file in $3
+for file in `find . -type f -name $2`
 do
 name=$file
-if [ $name == $2 ]
-then
 name1=${name##*.}
 name2=${name%.*}
-echo $name2$suff"."$name1
-fi
+mv $name $name2$suff"."$name1
+done
+else
+for file in `find $3 -type f -name $2`
+do
+name=$file
+name1=${name##*.}
+name2=${name%.*}
+mv $name $name2$suff"."$name1
 done
 fi
 
