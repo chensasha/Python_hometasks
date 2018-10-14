@@ -1,0 +1,36 @@
+import random
+import os
+import stddraw
+from picture import Picture
+from fade_effect import fading
+from rotation import rotate
+from swirl import make_swirl
+from wave import make_wave
+from glass import make_glass
+
+
+def RandomChoice():
+    return random.randrange(1, 5)
+
+path = ""
+all_files = os.listdir(path)
+pics = []
+for file in all_files:
+    if file.endswith(".jpg") or file.endswith(".png"):
+        pics += [file]
+stddraw.setCanvasSize(900, 700)
+for i in range(len(pics)):
+    filter = RandomChoice()
+    if filter == 1:
+        pic = rotate(Picture(pics[i]))
+    if filter == 2:
+        pic = make_swirl(Picture(pics[i]))
+    if filter == 3:
+        pic = make_wave(Picture(pics[i]))
+    if filter == 4:
+        pic = make_glass(Picture(pics[i]))
+    stddraw.picture(pic)
+    stddraw.show(1000)
+    if i != len(pics)-1:
+        stddraw.clear()
+stddraw.show()
