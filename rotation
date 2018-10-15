@@ -1,0 +1,22 @@
+import math
+from picture import Picture
+
+
+def rotate(pic1):
+    width = pic1.width()
+    height = pic1.height()
+    angle = math.radians(30)
+    sin = math.sin(angle)
+    cos = math.cos(angle)
+    x0 = 0.5 * (float(width) - 1.0)
+    y0 = 0.5 * (float(height) - 1.0)
+    pic2 = Picture(width, height)
+    for col in range(width):
+        for row in range(height):
+            a = float(col) - x0
+            b = float(row) - y0
+            cc = int(a * cos - b * sin + x0)
+            rr = int(a * sin + b * cos + y0)
+            if (cc >= 0) and (cc < width) and (rr >= 0) and (rr < height):
+                pic2.set(col, row, pic1.get(cc, rr))
+    return pic2
