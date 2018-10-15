@@ -1,0 +1,15 @@
+import stdrandom
+from picture import Picture
+
+
+def make_glass(pic1):
+    width = pic1.width()
+    height = pic1.height()
+    pic2 = Picture(width, height)
+    for col in range(width):
+        for row in range(height):
+            cc = (width + col + stdrandom.uniformInt(-5, 6)) % width
+            rr = (height + row + stdrandom.uniformInt(-5, 6)) % height
+            c = pic1.get(cc, rr)
+            pic2.set(col, row, c)
+    return pic2
