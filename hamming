@@ -1,0 +1,28 @@
+def flip(c):
+    return str(1-int(c))
+
+
+def flip_s(s, i):
+   str = s[:i]+flip(s[i])+s[i+1:]
+   return str
+
+
+def hamming_distance(s, k):
+    if k > 1:
+        c = s[-1]
+        if len(s) > k:
+            s1 = [j+c for j in hamming_distance(s[:-1], k)]
+        else:
+            s1 = []
+        s2 = [j+flip(c) for j in hamming_distance(s[:-1], k-1)]
+        res = []
+        res.extend(s1)
+        res.extend(s2)
+        return res
+    else:
+        if k == 0:
+            return s
+        return [flip_s(s, i) for i in range(len(s))]
+
+
+print(hamming_distance ("00000", 3))
