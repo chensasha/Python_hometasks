@@ -1,0 +1,21 @@
+import math
+from picture import Picture
+
+
+def make_swirl(pic1):
+    width = pic1.width()
+    height = pic1.height()
+    col = 0.5 * (float(width)  - 1.0)
+    row = 0.5 * (float(height) - 1.0)
+    pic2 = Picture(width, height)
+    for sCol in range(width):
+        for sRow in range(height):
+            dCol = float(sCol) - col
+            dRow = float(sRow) - row
+            r = math.sqrt(dCol*dCol + dRow*dRow)
+            angle = math.pi / 256.0 * r
+            tCol = int(dCol * math.cos(angle) - dRow * math.sin(angle) + col0)
+            tRow = int(dCol * math.sin(angle) + dRow * math.cos(angle) + row0)
+            if (tCol >= 0) and (tCol < width) and (tRow >= 0) and (tRow < height):
+                pic2.set(sCol, sRow, pic1.get(tCol, tRow))
+    return pic2
