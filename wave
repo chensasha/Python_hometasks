@@ -1,0 +1,15 @@
+import math
+from picture import Picture
+
+
+def make_wave(pic1):
+    width  = pic1.width()
+    height = pic1.height()
+    pic2 = Picture(width, height)
+    for col in range(width):
+        for row in range(height):
+            cc = col
+            rr = int(row + 20.0 * math.sin(col * 2.0 * math.pi / 64.0))
+            if (rr >= 0) and (rr < height):
+                pic2.set(col, row, pic1.get(cc, rr))
+    return pic2
