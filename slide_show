@@ -12,13 +12,14 @@ from glass import make_glass
 def RandomChoice():
     return random.randrange(1, 5)
 
+
 path = ""
 all_files = os.listdir(path)
 pics = []
 for file in all_files:
     if file.endswith(".jpg") or file.endswith(".png"):
         pics += [file]
-stddraw.setCanvasSize(900, 700)
+stddraw.setCanvasSize(900, 800)
 for i in range(len(pics)):
     filter = RandomChoice()
     if filter == 1:
@@ -32,5 +33,5 @@ for i in range(len(pics)):
     stddraw.picture(pic)
     stddraw.show(1000)
     if i != len(pics)-1:
-        stddraw.clear()
+       stddraw.clear()
 stddraw.show()
