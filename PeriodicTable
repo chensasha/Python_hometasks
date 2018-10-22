@@ -1,0 +1,55 @@
+import csv
+
+
+class Elements:
+
+    def __init__(self, name, atomic_number, symbol, atomic_weight):
+        self._name = name
+        self._weight = atomic_weight
+        self._number = atomic_number
+        self._symbol = symbol
+
+    def name(self):
+        return self._name
+
+    def atomic_number(self):
+        return self._number
+
+    def atomic_weight(self):
+        return self._weight
+
+    def symbol(self):
+        return self._symbol
+
+
+class PeriodicTable:
+
+    def __init__(self, f_obj):
+        self._elements = {
+            symbol: Elements(name, int(atomic_number), symbol, float(atomic_weight))
+            for (name, atomic_number, symbol, atomic_weight) in csv.reader(f_obj)
+        }
+
+    def elements(self):
+        return self._elements
+
+
+csv_path = "elements.csv"
+formulae = "H2O"
+with open(csv_path) as f:
+    periodic = PeriodicTable(f)
+    elem = formulae[0]
+    num = 1
+    molar_mass = 0
+    for s in formulae[1:]:
+        if s.isdigit() or s != s.upper():
+            if s.isalpha():
+                elem += s
+            else:
+                num = int(s)
+        else:
+            molar_mass += num * periodic.elements()[elem].weight()
+            num = 1
+            elem = s
+    molar_mass += num * periodic.elements()[elem].weight()
+    print(molar_mass)
