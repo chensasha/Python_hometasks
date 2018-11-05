@@ -1,0 +1,35 @@
+from instream import InStream
+from sketch import Sketch
+
+
+k = 5
+d = 10000
+filename = "jokes.txt"
+jokes = []
+sketches_j = []
+text = InStream(filename)
+while text.hasNextLine():
+    joke = text.readLine()
+    jokes += [joke]
+    sketches_j += [Sketch(joke, k, d)]
+filename = "news.txt"
+news = []
+sketches_n = []
+text = InStream(filename)
+while text.hasNextLine():
+    temp = text.readLine()
+    news += [temp]
+    sketches_n += [Sketch(temp, k, d)]
+max = []
+for i in range(len(news)):
+    m = 0.0
+    k = 0
+    for j in range(len(jokes)):
+       if sketches_n[i].similarTo(sketches_j[j]) > m:
+           m = sketches_n[i].similarTo(sketches_j[j])
+           k = j
+    max += [k]
+for i in range(len(news)):
+    print(news[i])
+    print(jokes[max[i]])
+    print()
