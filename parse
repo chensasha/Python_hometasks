@@ -1,0 +1,39 @@
+from instream import InStream
+from outstream import OutStream
+
+
+def _readHTML(i):
+    WEBSITE = ''
+    page = InStream(WEBSITE + str(i))
+    html = page.readAll()
+    return html
+
+
+def priceOf(html):
+    end = 0
+    trade = 0
+    all_jokes = []
+    while trade != -1:
+        trade = html.find('<section class="body">', end)
+        beg = html.find('>', trade)
+        end = html.find('</section>', beg)
+        joke = html[beg+1:end]
+        joke = joke.replace('<br />', '')
+        joke = joke.replace('&quot;', '')
+        joke = joke.replace('            ', '')
+        all_jokes += [joke]
+    return all_jokes
+
+
+def main():
+    for page in range(2, 10):
+        html = _readHTML(page)
+        a = priceOf(html)
+        #out = OutStream("jokes.txt")
+        for i in range(len(a) - 1):
+            #out.writeln(a[i])
+            print(a[i])
+
+
+if __name__ == '__main__':
+    main()
