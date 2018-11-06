@@ -10,8 +10,9 @@ sketches_j = []
 text = InStream(filename)
 while text.hasNextLine():
     joke = text.readLine()
-    jokes += [joke]
-    sketches_j += [Sketch(joke, k, d)]
+    if (not joke.isspace()) and (joke != ''):
+        jokes += [joke]
+        sketches_j += [Sketch(joke, k, d)]
 filename = "news.txt"
 news = []
 sketches_n = []
@@ -32,4 +33,4 @@ for i in range(len(news)):
 for i in range(len(news)):
     print(news[i])
     print(jokes[max[i]])
-    print()
+    print("")
