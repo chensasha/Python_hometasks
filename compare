@@ -1,36 +1,99 @@
 from instream import InStream
+from outstream import OutStream
 from sketch import Sketch
+import json
 
 
 k = 5
 d = 10000
-filename = "jokes.txt"
-jokes = []
-sketches_j = []
-text = InStream(filename)
-while text.hasNextLine():
-    joke = text.readLine()
-    if (not joke.isspace()) and (joke != ''):
-        jokes += [joke]
-        sketches_j += [Sketch(joke, k, d)]
-filename = "news.txt"
-news = []
-sketches_n = []
-text = InStream(filename)
-while text.hasNextLine():
-    temp = text.readLine()
-    news += [temp]
-    sketches_n += [Sketch(temp, k, d)]
-max = []
-for i in range(len(news)):
-    m = 0.0
-    k = 0
-    for j in range(len(jokes)):
-       if sketches_n[i].similarTo(sketches_j[j]) > m:
-           m = sketches_n[i].similarTo(sketches_j[j])
-           k = j
-    max += [k]
-for i in range(len(news)):
-    print(news[i])
-    print(jokes[max[i]])
-    print("")
+
+
+class JokesGrabber:
+    def __init__(self, website):
+        self._website = website
+
+    def readhtml(self, i):
+        page = InStream(self._website + str(i))
+        return page.readAll()
+
+    def getjokes(self, html):
+        end = 0
+        trade = 0
+        all_jokes = []
+        while trade != -1:
+            trade = html.find('<section class="body">', end)
+            beg = html.find('>', trade)
+            end = html.find('</section>', beg)
+            joke = html[beg + 1:end]
+            joke = joke.replace('<br />', '')
+            joke = joke.replace('&quot;', '')
+            joke = joke.replace('            ', '')
+            all_jokes += [joke]
+        return all_jokes
+
+
+class Jokes:
+    def __init__(self, filename):
+        self._text = InStream(filename)
+
+    def jokes(self):
+        t = self._text
+        a = []
+        while t.hasNextLine():
+            str = t.readLine()
+            if (not str.isspace()) and (str != ''):
+                a += [[str, Sketch(str, k, d)]]
+        return a
+
+
+class News:
+    def __init__(self, filename):
+        self._text = InStream(filename)
+
+    def news(self):
+        t = self._text
+        a = []
+        while t.hasNextLine():
+            str = t.readLine()
+            a += [[str, Sketch(str, k, d)]]
+        return a
+
+
+class Compare:
+    def __init__(self, file1, file2):
+        n = News(file1)
+        j = Jokes(file2)
+        self._news = n.news()
+        self._jokes = j.jokes()
+
+    def compare(self):
+        max = []
+        news = self._news
+        jokes = self._jokes
+        for i in range(len(news)):
+            m = 0.0
+            k = 0
+            for j in range(len(jokes)):
+                if news[i][1].similarTo(jokes[j][1]) > m:
+                    m = news[i][1].similarTo(jokes[j][1])
+                    k = j
+            max += [k]
+        for i in range(len(news)):
+            data = [news[i][0], jokes[max[i]][0]]
+            with open('result.json', 'w') as file:
+                json.dump(data, file)
+
+
+try:
+    grab = JokesGrabber("http://laps.zahav.ru/jokes/list/")
+    file1 = "news.txt"
+    file2 = "jokes.txt"
+    out = OutStream(file2)
+    for page in range(2, 10):
+        a = grab.getjokes(grab.readhtml(page))
+        for i in range(len(a) - 1):
+            out.writeln(a[i])
+    res = Compare(file1, file2)
+    res.compare()
+except OSError:
+    print("No such file/URL or you are disconnected from Internet")
