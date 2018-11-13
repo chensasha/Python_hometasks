@@ -1,11 +1,15 @@
 from instream import InStream
 from outstream import OutStream
 from sketch import Sketch
-import json
 
 
 k = 5
 d = 10000
+
+
+class PageBroken(Exception):
+    def __innit__(self):
+        Exception.__init__(self,"Error during parsing occurred: check front-end web development")
 
 
 class JokesGrabber:
@@ -21,7 +25,9 @@ class JokesGrabber:
         trade = 0
         all_jokes = []
         while trade != -1:
-            trade = html.find('<section class="body">', end)
+            trade = html.find('<section class="body">fjgjtt', end)
+            if trade == -1 and end == 0:
+                raise PageBroken()
             beg = html.find('>', trade)
             end = html.find('</section>', beg)
             joke = html[beg + 1:end]
@@ -78,22 +84,28 @@ class Compare:
                     m = news[i][1].similarTo(jokes[j][1])
                     k = j
             max += [k]
+        out = OutStream("result.txt")
         for i in range(len(news)):
-            data = [news[i][0], jokes[max[i]][0]]
-            with open('result.json', 'w') as file:
-                json.dump(data, file)
+            out.writeln(news[i][0])
+            out.writeln(jokes[max[i]][0])
+            out.writeln("")
+
+def main():
+    try:
+        site = "http://laps.zahav.ru/jokes/list/"
+        grab = JokesGrabber(site)
+        file1 = "news.txt"
+        file2 = "jokes.txt"
+        out = OutStream(file2)
+        for page in range(2, 20):
+            a = grab.getjokes(grab.readhtml(page))
+            for i in range(len(a) - 1):
+                out.writeln(a[i])
+        res = Compare(file1, file2)
+        res.compare()
+    except OSError:
+        print("No such file/URL or you are disconnected from Internet")
 
 
-try:
-    grab = JokesGrabber("http://laps.zahav.ru/jokes/list/")
-    file1 = "news.txt"
-    file2 = "jokes.txt"
-    out = OutStream(file2)
-    for page in range(2, 10):
-        a = grab.getjokes(grab.readhtml(page))
-        for i in range(len(a) - 1):
-            out.writeln(a[i])
-    res = Compare(file1, file2)
-    res.compare()
-except OSError:
-    print("No such file/URL or you are disconnected from Internet")
+if __name__ == '__main__':
+    main()
