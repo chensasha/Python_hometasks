@@ -1,6 +1,8 @@
 from instream import InStream
 from outstream import OutStream
 from sketch import Sketch
+from bs4 import BeautifulSoup
+import requests
 
 
 k = 5
@@ -9,7 +11,7 @@ d = 10000
 
 class PageBroken(Exception):
     def __innit__(self):
-        Exception.__init__(self,"Error during parsing occurred: check front-end web development")
+        Exception.__init__(self)
 
 
 class JokesGrabber:
@@ -25,9 +27,10 @@ class JokesGrabber:
         trade = 0
         all_jokes = []
         while trade != -1:
-            trade = html.find('<section class="body">fjgjtt', end)
+            trade = html.find('<section class="body">asdghf', end)
             if trade == -1 and end == 0:
-                raise PageBroken()
+                message = "Error during parsing occurred: check front-end web development of " + self._website
+                raise PageBroken(message)
             beg = html.find('>', trade)
             end = html.find('</section>', beg)
             joke = html[beg + 1:end]
@@ -36,6 +39,27 @@ class JokesGrabber:
             joke = joke.replace('            ', '')
             all_jokes += [joke]
         return all_jokes
+
+
+class NewsGrabber:
+    def __init__(self, website):
+        self._website = website
+
+    def getnews(self):
+        page = requests.get(self._website)
+        soup = BeautifulSoup(page.text, 'html.parser')
+        text = str(soup.get_text())
+        n = text.partition("Еще сюжетыsafhahi")[2]
+        if n == "":
+            message = "Error during parsing occurred: check front-end web development of " + self._website
+            raise PageBroken(message)
+        else:
+            t = n.partition("Нал.")[0]
+            if t == "":
+                message = "Error during parsing occurred: check front-end web development of " + self._website
+                raise PageBroken(message)
+            else:
+                return t
 
 
 class Jokes:
@@ -61,7 +85,8 @@ class News:
         a = []
         while t.hasNextLine():
             str = t.readLine()
-            a += [[str, Sketch(str, k, d)]]
+            if (not str.isspace()) and (str != ''):
+                a += [[str, Sketch(str, k, d)]]
         return a
 
 
@@ -76,7 +101,7 @@ class Compare:
         max = []
         news = self._news
         jokes = self._jokes
-        for i in range(len(news)):
+        for i in range(4, len(news)):
             m = 0.0
             k = 0
             for j in range(len(jokes)):
@@ -85,26 +110,35 @@ class Compare:
                     k = j
             max += [k]
         out = OutStream("result.txt")
-        for i in range(len(news)):
+        for i in range(4, len(news)):
             out.writeln(news[i][0])
-            out.writeln(jokes[max[i]][0])
+            out.writeln(jokes[max[i-4]][0])
             out.writeln("")
 
+
 def main():
+    file1 = "news.txt"
+    file2 = "jokes.txt"
+    web1 = ""
+    web2 = "http://laps.zahav.ru/jokes/list/"
     try:
-        site = "http://laps.zahav.ru/jokes/list/"
-        grab = JokesGrabber(site)
-        file1 = "news.txt"
-        file2 = "jokes.txt"
-        out = OutStream(file2)
-        for page in range(2, 20):
-            a = grab.getjokes(grab.readhtml(page))
-            for i in range(len(a) - 1):
-                out.writeln(a[i])
-        res = Compare(file1, file2)
-        res.compare()
+        news = NewsGrabber(web1)
     except OSError:
-        print("No such file/URL or you are disconnected from Internet")
+        print("No such website (" + web1 + ") or you are disconnected from Internet")
+    else:
+        out1 = OutStream(file1)
+        out1.writeln(news.getnews())
+        try:
+            grab = JokesGrabber(web2)
+            # out2 = OutStream(file2)
+            # for page in range(2, 20):
+            #    a = grab.getjokes(grab.readhtml(page))
+            #    for i in range(len(a) - 1):
+            #       out2.writeln(a[i])
+            res = Compare(file1, file2)
+            res.compare()
+        except OSError:
+            print("No such website (" + web2 + ") or you are disconnected from Internet")
 
 
 if __name__ == '__main__':
