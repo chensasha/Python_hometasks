@@ -14,12 +14,26 @@ class PageBroken(Exception):
         Exception.__init__(self)
 
 
+class ConnectionError(Exception):
+    def __innit__(self):
+        Exception.__init__(self)
+
+
+class InvalidAdress(Exception):
+    def __innit__(self):
+        Exception.__init__(self)
+
+
 class JokesGrabber:
     def __init__(self, website):
         self._website = website
 
     def readhtml(self, i):
-        page = InStream(self._website + str(i))
+        try:
+            page = InStream(self._website + str(i))
+        except IOError:
+            message = "You are disconnected from Internet or no such website: " + self._website
+            raise InvalidAdress(message)
         return page.readAll()
 
     def getjokes(self, html):
@@ -27,7 +41,7 @@ class JokesGrabber:
         trade = 0
         all_jokes = []
         while trade != -1:
-            trade = html.find('<section class="body">asdghf', end)
+            trade = html.find('<section class="body">', end)
             if trade == -1 and end == 0:
                 message = "Error during parsing occurred: check front-end web development of " + self._website
                 raise PageBroken(message)
@@ -46,20 +60,22 @@ class NewsGrabber:
         self._website = website
 
     def getnews(self):
-        page = requests.get(self._website)
+        try:
+            page = requests.get(self._website)
+        except IOError:
+            message = "You are disconnected from Internet or no such website: " + self._website
+            raise InvalidAdress(message)
         soup = BeautifulSoup(page.text, 'html.parser')
         text = str(soup.get_text())
-        n = text.partition("Еще сюжетыsafhahi")[2]
+        n = text.partition("Еще сюжеты")[2]
         if n == "":
             message = "Error during parsing occurred: check front-end web development of " + self._website
             raise PageBroken(message)
-        else:
-            t = n.partition("Нал.")[0]
-            if t == "":
-                message = "Error during parsing occurred: check front-end web development of " + self._website
-                raise PageBroken(message)
-            else:
-                return t
+        t = n.partition("Нал.")[0]
+        if t == "":
+            message = "Error during parsing occurred: check front-end web development of " + self._website
+            raise PageBroken(message)
+        return t
 
 
 class Jokes:
@@ -110,7 +126,7 @@ class Compare:
                     k = j
             max += [k]
         out = OutStream("result.txt")
-        for i in range(4, len(news)):
+        for i in range(5, len(news)):
             out.writeln(news[i][0])
             out.writeln(jokes[max[i-4]][0])
             out.writeln("")
@@ -119,26 +135,19 @@ class Compare:
 def main():
     file1 = "news.txt"
     file2 = "jokes.txt"
-    web1 = ""
+    web1 = "https://www.rbc"
     web2 = "http://laps.zahav.ru/jokes/list/"
-    try:
-        news = NewsGrabber(web1)
-    except OSError:
-        print("No such website (" + web1 + ") or you are disconnected from Internet")
-    else:
-        out1 = OutStream(file1)
-        out1.writeln(news.getnews())
-        try:
-            grab = JokesGrabber(web2)
-            # out2 = OutStream(file2)
-            # for page in range(2, 20):
-            #    a = grab.getjokes(grab.readhtml(page))
-            #    for i in range(len(a) - 1):
-            #       out2.writeln(a[i])
-            res = Compare(file1, file2)
-            res.compare()
-        except OSError:
-            print("No such website (" + web2 + ") or you are disconnected from Internet")
+    news = NewsGrabber(web1)
+    out1 = OutStream(file1)
+    out1.writeln(news.getnews())
+    grab = JokesGrabber(web2)
+    out2 = OutStream(file2)
+    for page in range(2, 30):
+        a = grab.getjokes(grab.readhtml(page))
+        for i in range(len(a) - 1):
+            out2.writeln(a[i])
+        res = Compare(file1, file2)
+        res.compare()
 
 
 if __name__ == '__main__':
