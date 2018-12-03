@@ -41,10 +41,10 @@ class JokesGrabber:
                     try:
                         page = InStream(self._website + str(i))
                         html = page.readAll()
-                    except OSError:
+                    except IOError:
                         try:
                             page = InStream("https://yandex.ru")
-                        except OSError:
+                        except IOError:
                             raise ConnectionError("You are disconnected from Internet")
                         else:
                             raise InvalidAdress("No such website: " + self._website)
@@ -81,10 +81,10 @@ class NewsGrabber:
             with open('news.json', 'w') as f:
                 try:
                     page = requests.get(self._website)
-                except OSError:
+                except IOError:
                     try:
                         page = requests.get("https://yandex.ru")
-                    except OSError:
+                    except IOError:
                         raise ConnectionError("You are disconnected from Internet")
                     else:
                         raise InvalidAdress("No such website: " + self._website)
